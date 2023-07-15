@@ -161,51 +161,55 @@ void TreeDeleteFixUp(Tree* T, Node* x){
     }
     else if(x == x->p->left){
         Node *w = x->p->right;
-        if(w->color == RED){
+        if(w != NULL && w->color == RED){
             w->color = BLACK;
             x->p->color = RED;
             LeftRotate(T, x->p);
             w = x->p->right;
         }
-        if(w->left->color == BLACK && w->right->color == BLACK){
+        if(w != NULL && (w->left == NULL || w->left->color == BLACK) && (w->right == NULL || w->right->color == BLACK)){
             w->color = RED;
             TreeDeleteFixUp(T, x->p);
         }
         else{
-            if(w->right->color == BLACK){
-                w->left->color = BLACK;
+            if(w->right == NULL || w->right->color == BLACK){
+                if(w->left != NULL)
+                    w->left->color = BLACK;
                 w->color = RED;
                 RightRotate(T, w);
                 w = x->p->right;
             }
             w->color = x->p->color;
             x->p->color = BLACK;
-            w->right->color = BLACK;
+            if(w->right != NULL)
+                w->right->color = BLACK;
             LeftRotate(T, x->p);
         }
     }
     else{
         Node *w = x->p->left;
-        if(w->color == RED){
+        if(w != NULL && w->color == RED){
             w->color = BLACK;
             x->p->color = RED;
             LeftRotate(T, x->p);
             w = x->p->left;
         }
-        if(w->right->color == BLACK && w->left->color == BLACK){
+        if(w != NULL && (w->left == NULL || w->left->color == BLACK) && (w->right == NULL || w->right->color == BLACK)){
             w->color = RED;
             TreeDeleteFixUp(T, x->p);
         }
         else{
-            if(w->left->color == BLACK){
-                w->right->color = BLACK;
+            if(w->left == NULL || w->left->color == BLACK){
+                if(w->right != NULL)
+                    w->right->color = BLACK;
                 w->color = RED;
                 LeftRotate(T, w);
                 w = x->p->left;
             }
             w->color = x->p->color;
             x->p->color = BLACK;
-            w->left->color = BLACK;
+            if(w->left != NULL)
+                w->left->color = BLACK;
             RightRotate(T, x->p);
         }
     }

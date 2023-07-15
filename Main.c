@@ -71,10 +71,10 @@ int main(int argc, char const *argv[])
 {
     Tree* Strada = (Tree*)malloc(sizeof(Tree));
     Strada->Root = NULL;
-    int i=0;
+    //int i=0;
     
     while(!feof(stdin)){
-        printf("LINE %d\n", i++);
+        //printf("LINE %d\n", i++);
         ParseInput(Strada);
     }
 
