@@ -73,8 +73,10 @@ int main(int argc, char const *argv[])
     Strada->Root = NULL;
     int i=0;
     
-    printf("LINE %d\n", i++);
-    ParseInput(Strada);
+    while(!feof(stdin)){
+        printf("LINE %d\n", i++);
+        ParseInput(Strada);
+    }
 
     return 0;
 }

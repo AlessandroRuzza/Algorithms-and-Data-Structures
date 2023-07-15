@@ -14,6 +14,7 @@ struct RB_Node{
     int max_car;
     struct RB_Tree{     
         struct RB_Node* Root;
+        //struct RB_Node NIL;
     } carTree;
 };
 
@@ -42,6 +43,7 @@ Node* MakeCarNode(int autonomy){
 }
 
 Node* TreeMax(Node* x){
+    if(x == NULL) return NULL;
     while(x->right != NULL)
         x = x->right;
     return x;
@@ -86,6 +88,8 @@ void LeftRotate(Tree* T, Node* x){
         x->p->left = y;
     else    
         x->p->right = y;
+    y->left = x;
+    x->p = y;
 }
 
 void RightRotate(Tree* T, Node* x){
@@ -102,7 +106,10 @@ void RightRotate(Tree* T, Node* x){
         x->p->left = y;
     else    
         x->p->right = y;
+    y->right = x;
+    x->p = y;
 }
+
 
 void TreeInsertFixUp(Tree* T, Node* z);
 void TreeInsert(Tree* T, Node* z){
@@ -135,7 +142,8 @@ void TreeDelete(Tree* T, Node* z){
     if(y->left != NULL)
         x = y->left;
     else x = y->right;
-    x->p = y->p;
+    if(x != NULL)
+        x->p = y->p;
     if(y->p == NULL)
         T->Root = x;
     else if(y == y->p->left)
@@ -143,7 +151,7 @@ void TreeDelete(Tree* T, Node* z){
     else y->p->right = x;
     if(y != z)
         z->dist = y->dist;
-    if(y->color == BLACK)
+    if(y->color == BLACK && x != NULL)
         TreeDeleteFixUp(T, x);
 }
 
@@ -245,7 +253,7 @@ void TreeInsertFixUp(Tree* T, Node* z){
                     }
                     x->color = BLACK;
                     x->p->color = RED;
-                    RightRotate(T, x->p);
+                    LeftRotate(T, x->p);
                 }
             }
         }

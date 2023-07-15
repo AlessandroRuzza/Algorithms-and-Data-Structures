@@ -4,20 +4,24 @@ typedef Node* Stazione;
 typedef Node* Car;
 
 bool AggiungiStazione(Tree* Strada, int dist, int numAuto){
-    if(TreeSearch(Strada->Root, dist) != NULL){
-        return false;
-    }
+    
     Stazione nuovaStazione = MakeNode(dist);
     int autonomia=0;
     for(int i=0; i<numAuto; i++){
         scanf("%d", &autonomia);
         Car car = MakeCarNode(autonomia);
-        printf("%d %d\n", i, autonomia);
+        //printf("%d %d\n", i, autonomia);
         TreeInsert(&nuovaStazione->carTree, car);
     }
-    nuovaStazione->max_car = TreeMax(nuovaStazione->carTree.Root)->dist;
-    TreeInsert(Strada, nuovaStazione);
-    return true;
+    if(numAuto > 0)
+        nuovaStazione->max_car = TreeMax(nuovaStazione->carTree.Root)->dist;
+    if(TreeSearch(Strada->Root, dist) != NULL){
+        return false;
+    }
+    else{
+        TreeInsert(Strada, nuovaStazione);
+        return true;
+    }
 }
 
 bool DemolisciStazione(Tree* Strada, int dist){
@@ -53,6 +57,6 @@ bool RottamaAuto(Tree* Strada, int dist, int autonomia){
 }
 
 bool PianificaPercorso(Tree* Strada, int start, int end){
-    fprintf(stderr, "TEMP: TO IMPLEMENT");
+    fprintf(stderr, "TEMP: TO IMPLEMENT\n");
     return false;
 }
