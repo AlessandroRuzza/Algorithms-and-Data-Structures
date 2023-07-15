@@ -32,6 +32,7 @@ Node* MakeNode(int dist){
     n->carTree.Root = NULL;
     return n;
 }
+#define IS_CAR_VALUE -100
 Node* MakeCarNode(int autonomy){
     Node* car = (Node*)malloc(sizeof(Node));
     car->dist = autonomy;
@@ -39,7 +40,22 @@ Node* MakeCarNode(int autonomy){
     car->right = NULL;
     car->p = NULL;
     car->color = BLACK;
+    car->max_car = IS_CAR_VALUE; // using this as "flag" to identify Car nodes
     return car;
+}
+void ClearMemory(Node* Root){
+    if(Root == NULL)
+        return;
+    ClearMemory(Root->left);
+    ClearMemory(Root->right);
+
+    //printf("\nCleaning node %d ", Root->dist);
+    if(Root->max_car != IS_CAR_VALUE) 
+        ClearMemory(Root->carTree.Root);
+    //else
+        //printf("(car)");
+
+    free(Root);
 }
 
 Node* TreeMax(Node* x){
@@ -53,7 +69,6 @@ Node* TreeMin(Node* x){
         x = x->left;
     return x;
 }
-
 Node* TreeSuccessor(Node* x){
     if(x->right != NULL)
         return TreeMin(x->right);
@@ -64,7 +79,6 @@ Node* TreeSuccessor(Node* x){
     }
     return y;
 }
-
 Node* TreeSearch(Node* x, int dist){
     if(x == NULL || x->dist == dist)
         return x;
@@ -91,7 +105,6 @@ void LeftRotate(Tree* T, Node* x){
     y->left = x;
     x->p = y;
 }
-
 void RightRotate(Tree* T, Node* x){
     // rotate and update references
     Node* y = x->left;
@@ -153,6 +166,10 @@ void TreeDelete(Tree* T, Node* z){
         z->dist = y->dist;
     if(y->color == BLACK && x != NULL)
         TreeDeleteFixUp(T, x);
+
+    y->left = NULL;
+    y->right = NULL;
+    ClearMemory(y);
 }
 
 void TreeDeleteFixUp(Tree* T, Node* x){

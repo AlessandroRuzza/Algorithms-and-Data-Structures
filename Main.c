@@ -78,5 +78,7 @@ int main(int argc, char const *argv[])
         ParseInput(Strada);
     }
 
+    //ClearMemory(Strada->Root);
+    //free(Strada);
     return 0;
 }
