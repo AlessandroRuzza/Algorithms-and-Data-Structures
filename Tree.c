@@ -43,15 +43,15 @@ Node* MakeCarNode(int autonomy){
     car->max_car = IS_CAR_VALUE; // using this as "flag" to identify Car nodes
     return car;
 }
-void ClearMemory(Node* Root){
+void ClearMemoryTree(Node* Root){
     if(Root == NULL)
         return;
-    ClearMemory(Root->left);
-    ClearMemory(Root->right);
+    ClearMemoryTree(Root->left);
+    ClearMemoryTree(Root->right);
 
     //printf("\nCleaning node %d ", Root->dist);
     if(Root->max_car != IS_CAR_VALUE) 
-        ClearMemory(Root->carTree.Root);
+        ClearMemoryTree(Root->carTree.Root);
     //else
         //printf("(car)");
 
@@ -184,7 +184,7 @@ void TreeDelete(Tree* T, Node* z){
 
     y->left = NULL;
     y->right = NULL;
-    ClearMemory(y);
+    ClearMemoryTree(y);
 }
 
 void TreeDeleteFixUp(Tree* T, Node* x){

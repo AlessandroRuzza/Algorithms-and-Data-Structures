@@ -5,7 +5,9 @@ typedef Node* Stazione;
 typedef Node* Car;
 
 bool AggiungiStazione(Tree* Strada, int dist, int numAuto){
-    
+    if(TreeSearch(Strada->Root, dist) != NULL){
+        return false;
+    }
     Stazione nuovaStazione = MakeNode(dist);
     int autonomia=0;
     for(int i=0; i<numAuto; i++){
@@ -16,13 +18,9 @@ bool AggiungiStazione(Tree* Strada, int dist, int numAuto){
     }
     if(numAuto > 0)
         nuovaStazione->max_car = TreeMax(nuovaStazione->carTree.Root)->dist;
-    if(TreeSearch(Strada->Root, dist) != NULL){
-        return false;
-    }
-    else{
-        TreeInsert(Strada, nuovaStazione);
-        return true;
-    }
+    
+    TreeInsert(Strada, nuovaStazione);
+    return true;
 }
 
 bool DemolisciStazione(Tree* Strada, int dist){
@@ -43,7 +41,7 @@ bool AggiungiAuto(Tree* Strada, int dist, int autonomia){
     TreeInsert(&stazione->carTree, car);
     if(car->dist > stazione->max_car) 
         stazione->max_car = car->dist;
-        
+
     return true;
 }
 
@@ -60,18 +58,18 @@ bool RottamaAuto(Tree* Strada, int dist, int autonomia){
     return true;
 }
 
-bool CanReach(Node* from, Node* to){
+bool CanReach(Stazione from, Stazione to){
     int diff = to->dist - from->dist;
     if(diff < 0) diff = -diff;  // diff = absolute value of distance between from and to
     return from->max_car >= diff;
 }
 
-List* PercorsoBackward(Tree* Strada, Node* start, Node*  end){
+List* PercorsoBackward(Tree* Strada, Stazione start, Stazione end){
     fprintf(stderr, "TEMP: BACKWARD PATH NOT IMPLEMENTED\n");
     return NULL;
 }
 
-List* PercorsoForward(Node* start, Node* end){
+List* PercorsoForward(Stazione start, Stazione end){
     List* percorso;
 
     if(start == end){  // caso base
@@ -80,8 +78,8 @@ List* PercorsoForward(Node* start, Node* end){
         percorso->TAIL = NULL;
     }
     else{   // start.dist < end.dist
-        Node* prevTappa = NULL;
-        Node* x = end;
+        Stazione prevTappa = NULL;
+        Stazione x = end;
         do{
             x = TreePredecessor(x);   
             if(CanReach(x, end))
@@ -116,8 +114,8 @@ bool CheckPercorso(List* percorso){
 
 List* PianificaPercorso(Tree* Strada, int start, int end){
     List* percorso;
-    Node* startNode = TreeSearch(Strada->Root, start);
-    Node* endNode = TreeSearch(Strada->Root, end);
+    Stazione startNode = TreeSearch(Strada->Root, start);
+    Stazione endNode = TreeSearch(Strada->Root, end);
     if(startNode == NULL || endNode == NULL){
         fprintf(stderr, "Errore. Stazioni non inserite per percorso %d %d", start, end);
         return NULL;

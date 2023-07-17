@@ -31,6 +31,16 @@ void PrintList(List* list){
     }
     printf("\n");
 }
+void ClearMemoryList(List* list){
+    ListNode* x = list->HEAD;
+    ListNode* y;
+    while(x != NULL){
+        y = x;
+        x = x->next;
+        free(y);
+    }
+    free(list);
+}
 
 void Append(List* to, List* from){
     to->TAIL->next = from->HEAD;

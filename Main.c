@@ -76,7 +76,7 @@ void ParseInput(Tree* Strada){
             scanf("%d", &param2);
             percorso = PianificaPercorso(Strada, param1, param2);
             if(percorso == NULL) printf("nessun percorso\n");
-            else PrintList(percorso);
+            else{ PrintList(percorso); ClearMemoryList(percorso); }
             break;
 
         case BREAK:
@@ -91,14 +91,12 @@ int main(int argc, char const *argv[])
 {
     Tree* Strada = (Tree*)malloc(sizeof(Tree));
     Strada->Root = NULL;
-    //int i=0;
     
     while(!feof(stdin)){
-        //printf("LINE %d\n", i++);
         ParseInput(Strada);
     }
 
-    //ClearMemory(Strada->Root);
-    //free(Strada);
+    ClearMemoryTree(Strada->Root);
+    free(Strada);
     return 0;
 }
