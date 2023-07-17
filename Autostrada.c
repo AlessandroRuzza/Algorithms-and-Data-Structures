@@ -1,4 +1,5 @@
 #include "Tree.c"
+#include "List.c"
 
 typedef Node* Stazione;
 typedef Node* Car;
@@ -56,7 +57,61 @@ bool RottamaAuto(Tree* Strada, int dist, int autonomia){
     return true;
 }
 
-bool PianificaPercorso(Tree* Strada, int start, int end){
-    fprintf(stderr, "TEMP: TO IMPLEMENT\n");
-    return false;
+bool CanReach(Node* from, Node* to){
+    int diff = to->dist - from->dist;
+    if(diff < 0) diff = -diff;  // diff = absolute value of distance between from and to
+    return from->max_car >= diff;
+}
+
+List* PercorsoBackward(Tree* Strada, Node* start, Node*  end){
+    fprintf(stderr, "TEMP: BACKWARD PATH NOT IMPLEMENTED\n");
+    return NULL;
+}
+
+List* PercorsoForward(Node* start, Node* end){
+    List* percorso;
+
+    if(start == end){  // caso base
+        percorso = (List*)malloc(sizeof(List));
+        percorso->HEAD = NULL;
+        percorso->TAIL = NULL;
+    }
+    else{   // start.dist < end.dist
+        Node* prevTappa = NULL;
+        Node* x = end;
+        do{
+            x = TreePredecessor(x);   
+            if(CanReach(x, end))
+                prevTappa = x;
+        }while(x != start);
+        // ora prevTappa è la stazione con la minore dist che può raggiungere end
+        if(prevTappa == NULL){
+            percorso = NULL; // se non esiste, non esiste percorso
+        }
+        else{   // se esiste, ripeto ricorsivamente tra prevTappa e end
+            percorso = PercorsoForward(start, prevTappa);
+        }
+    }
+    if(percorso != NULL)
+        InsertTail(percorso, end);
+
+    return percorso;
+}
+
+List* PianificaPercorso(Tree* Strada, int start, int end){
+    List* percorso;
+    Node* startNode = TreeSearch(Strada->Root, start);
+    Node* endNode = TreeSearch(Strada->Root, end);
+    if(startNode == NULL || endNode == NULL){
+        fprintf(stderr, "Errore. Stazioni non inserite per percorso %d %d", start, end);
+        return NULL;
+    }
+    if(start < end){
+        percorso = PercorsoForward(startNode, endNode);
+    }
+    else{
+        percorso = PercorsoBackward(Strada, startNode, endNode);
+    }
+
+    return percorso;
 }

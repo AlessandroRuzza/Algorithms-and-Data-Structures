@@ -79,6 +79,16 @@ Node* TreeSuccessor(Node* x){
     }
     return y;
 }
+Node* TreePredecessor(Node* x){
+    if(x->left != NULL)
+        return TreeMax(x->left);
+    Node *y = x->p;
+    while(y != NULL && x == y->left){
+        x = y;
+        y = y->p;
+    }
+    return y;
+}
 Node* TreeSearch(Node* x, int dist){
     if(x == NULL || x->dist == dist)
         return x;

@@ -57,10 +57,12 @@ void ParseInput(Tree* Strada){
             break;
 
         case PIANIFICA_PERCORSO:
+            List* percorso;
             scanf("%d", &param1);
             scanf("%d", &param2);
-            result = PianificaPercorso(Strada, param1, param2);
-            if(!result) printf("nessun percorso\n");
+            percorso = PianificaPercorso(Strada, param1, param2);
+            if(percorso == NULL) printf("nessun percorso\n");
+            else PrintList(percorso);
             break;
 
         default: fprintf(stderr, "Comando non identificato!");
