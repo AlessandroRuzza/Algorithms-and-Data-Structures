@@ -172,8 +172,13 @@ void TreeDelete(Tree* T, Node* z){
     else if(y == y->p->left)
         y->p->left = x;
     else y->p->right = x;
-    if(y != z)
+    if(y != z){
         z->dist = y->dist;
+        z->max_car = y->max_car;
+        Tree temp = z->carTree;
+        z->carTree = y->carTree;
+        y->carTree = temp;
+    }
     if(y->color == BLACK && x != NULL)
         TreeDeleteFixUp(T, x);
 

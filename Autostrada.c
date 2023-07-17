@@ -41,6 +41,9 @@ bool AggiungiAuto(Tree* Strada, int dist, int autonomia){
 
     Car car = MakeCarNode(autonomia);
     TreeInsert(&stazione->carTree, car);
+    if(car->dist > stazione->max_car) 
+        stazione->max_car = car->dist;
+        
     return true;
 }
 
@@ -98,6 +101,19 @@ List* PercorsoForward(Node* start, Node* end){
     return percorso;
 }
 
+bool CheckPercorso(List* percorso){
+    if(percorso == NULL) return true;
+
+    ListNode* curr = percorso->HEAD;
+    while (curr->next != NULL)
+    {
+        if(!CanReach(curr->s, curr->next->s)) 
+            return false;
+        curr = curr->next;
+    }
+    return true;
+}
+
 List* PianificaPercorso(Tree* Strada, int start, int end){
     List* percorso;
     Node* startNode = TreeSearch(Strada->Root, start);
@@ -112,6 +128,9 @@ List* PianificaPercorso(Tree* Strada, int start, int end){
     else{
         percorso = PercorsoBackward(Strada, startNode, endNode);
     }
+
+    bool isCorrect = CheckPercorso(percorso);
+    if(!isCorrect) printf("Percorso trovato, ma non attuabile! ");
 
     return percorso;
 }

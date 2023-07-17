@@ -18,5 +18,5 @@ fi
 
 if [ $checkDiff = "y" ]
 then 
-    diff ./output_$input.txt ./Test/open_$input.output.txt > diff_$input.txt 
+    diff ./output_$input.txt ./Test/open_$input.output.txt > open_$input.diff.txt 
 fi

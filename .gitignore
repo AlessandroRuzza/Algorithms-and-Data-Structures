@@ -4,3 +4,5 @@
 Test/*
 main
 *.ini
+out_gdb*
+outgdb*
