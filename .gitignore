@@ -3,6 +3,7 @@
 *.txt
 Test/*
 main
+*naiveMain*
 *.ini
 out_gdb*
 outgdb*

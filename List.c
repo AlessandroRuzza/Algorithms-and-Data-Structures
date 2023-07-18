@@ -11,8 +11,16 @@ typedef struct DoubleLinkedListNode{
 typedef struct DoubleLinkedList{
     ListNode* HEAD;
     ListNode* TAIL;
+    int length;
 } List;
 
+List* MakeEmptyList(){
+    List* percorso = (List*)malloc(sizeof(List));
+    percorso->HEAD = NULL;
+    percorso->TAIL = NULL;
+    percorso->length = 0;
+    return percorso;
+}
 ListNode* MakeListNode(Node* x){
     ListNode* node = (ListNode*)malloc(sizeof(ListNode));
     node->s = x;
@@ -45,10 +53,12 @@ void ClearMemoryList(List* list){
 void Append(List* to, List* from){
     to->TAIL->next = from->HEAD;
     to->TAIL = from->TAIL;
+    to->length += from->length;
 }
 
 void InsertTail(List* list, Node* x){
     ListNode* node = MakeListNode(x);
+    list->length++;
 
     if(list->TAIL == NULL){
         list->HEAD = node;
@@ -62,6 +72,7 @@ void InsertTail(List* list, Node* x){
 }
 void InsertHead(List* list, Node* x){
     ListNode* node = MakeListNode(x);
+    list->length++;
     
     if(list->HEAD == NULL){
         list->HEAD = node;
@@ -76,20 +87,26 @@ void InsertHead(List* list, Node* x){
 
 void InsertAfter(List* list, ListNode* element, Node* x){
     ListNode* node = MakeListNode(x);
+    list->length++;
+
     if(element->next == NULL) // element is TAIL
         list->TAIL = node;
+    else
+        element->next->prev = node;
 
-    element->next->prev = node;
     node->next = element->next;
     element->next = node;
     node->prev = element;
 }
 void InsertBefore(List* list, ListNode* element, Node* x){
     ListNode* node = MakeListNode(x);
+    list->length++;
+
     if(element->prev == NULL) // element is HEAD
         list->HEAD = node;
+    else
+        element->prev->next = node;
 
-    element->prev->next = node;
     node->prev = element->prev;
     element->prev = node;
     node->next = element;
@@ -103,8 +120,7 @@ void Reverse(List* list){
 
     list->HEAD = list->TAIL;
     list->TAIL = x;
-    while (x != NULL)
-    {
+    while (x != NULL){
         y = x->next;
         x->next = x->prev;
         x->prev = y;

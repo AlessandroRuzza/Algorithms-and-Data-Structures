@@ -6,6 +6,7 @@
 #define ROTTAMA_AUTO 3
 #define PIANIFICA_PERCORSO 4
 #define BREAK 5
+#define END 6
 
 Car CarCheck4689(Tree* Strada){
     Stazione staz = TreeSearch(Strada->Root, 4689);
@@ -16,7 +17,7 @@ void BreakPoint(Tree* Strada){
     char comment[200];
     scanf("%s", comment);
     fprintf(stderr, "%s\n", comment);
-    CarCheck4689(Strada);
+    //CarCheck4689(Strada);
 }
 
 int IdentifyCommand(char command[25]){
@@ -26,11 +27,12 @@ int IdentifyCommand(char command[25]){
     if(command[0] == 'r')                       return ROTTAMA_AUTO;
     if(command[0] == 'p')                       return PIANIFICA_PERCORSO;
     if(command[0] == 'b')                       return BREAK;
+    if(command[0] == 0)                         return END;
 
     return -1; // se non c'è match con nessun comando
 }
 void ParseInput(Tree* Strada){
-    char command[25];
+    char command[25] = {0};
     int commandID = -1;
     int param1, param2;
     bool result;
@@ -82,8 +84,10 @@ void ParseInput(Tree* Strada){
         case BREAK:
             BreakPoint(Strada);
             break;
+        case END:
+            break;
 
-        default: fprintf(stderr, "Comando non identificato!");
+        default: fprintf(stderr, "Comando non identificato!\n");
     }
 }
 
@@ -91,8 +95,9 @@ int main(int argc, char const *argv[])
 {
     Tree* Strada = (Tree*)malloc(sizeof(Tree));
     Strada->Root = NULL;
-    
+    //int i=1;
     while(!feof(stdin)){
+        //fprintf(stderr, "LINE %d \n", i++);
         ParseInput(Strada);
     }
 

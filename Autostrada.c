@@ -5,11 +5,14 @@ typedef Node* Stazione;
 typedef Node* Car;
 
 bool AggiungiStazione(Tree* Strada, int dist, int numAuto){
+    int autonomia=0;
     if(TreeSearch(Strada->Root, dist) != NULL){
+        for(int i=0; i<numAuto; i++){
+            scanf("%d", &autonomia);
+        }
         return false;
     }
     Stazione nuovaStazione = MakeNode(dist);
-    int autonomia=0;
     for(int i=0; i<numAuto; i++){
         scanf("%d", &autonomia);
         Car car = MakeCarNode(autonomia);
@@ -64,18 +67,69 @@ bool CanReach(Stazione from, Stazione to){
     return from->max_car >= diff;
 }
 
-List* PercorsoBackward(Tree* Strada, Stazione start, Stazione end){
-    fprintf(stderr, "TEMP: BACKWARD PATH NOT IMPLEMENTED\n");
-    return NULL;
+List* PercorsoNaiveBackward(Stazione start, Stazione end){
+    List* percorso = NULL;
+
+    if(start == end){  // caso base
+        percorso = MakeEmptyList(percorso);
+    }
+    else{   // start.dist > end.dist
+        Stazione prevTappa = NULL;
+        Stazione x = end;
+        do{
+            x = TreeSuccessor(x);   
+            if(CanReach(x, end))
+                prevTappa = x;
+        }while(x != start);
+        // ora prevTappa è la stazione con la maggiore dist che può raggiungere end
+        if(prevTappa != NULL){  // se esiste, ripeto ricorsivamente tra prevTappa e end
+            percorso = PercorsoNaiveBackward(start, prevTappa);
+        }
+    }
+    if(percorso != NULL)
+        InsertTail(percorso, end);
+
+    return percorso;
+}
+List* PercorsoMinDistBackward(Stazione start, Stazione end, int length){
+    List* percorso = NULL;
+    if(length == 1 && start == end){  
+        percorso = MakeEmptyList();
+        InsertHead(percorso, end);
+    }
+    else if(length > 1){ 
+        Stazione x = start;
+        do{
+            x = TreePredecessor(x);
+            if(CanReach(start, x))
+                percorso = PercorsoMinDistBackward(x, end, length-1);
+        }while(x != end && CanReach(start, x));
+        if(percorso != NULL)
+            InsertHead(percorso, start);
+    }
+
+    return percorso;
+}
+
+List* PercorsoBackward(Stazione start, Stazione end){
+    List* percorso = PercorsoNaiveBackward(start, end);
+    if(percorso == NULL) return NULL;
+    //else, esiste almeno un percorso
+    int minLength = percorso->length;
+    ClearMemoryList(percorso);
+    percorso = NULL;
+
+    percorso = AI_PercorsoMinDistBackward(start, end, minLength);
+
+    fprintf(stderr, "Using NAIVE PercorsoBackward!\n");
+    return percorso;
 }
 
 List* PercorsoForward(Stazione start, Stazione end){
-    List* percorso;
+    List* percorso = NULL;
 
     if(start == end){  // caso base
-        percorso = (List*)malloc(sizeof(List));
-        percorso->HEAD = NULL;
-        percorso->TAIL = NULL;
+        percorso = MakeEmptyList();
     }
     else{   // start.dist < end.dist
         Stazione prevTappa = NULL;
@@ -86,12 +140,8 @@ List* PercorsoForward(Stazione start, Stazione end){
                 prevTappa = x;
         }while(x != start);
         // ora prevTappa è la stazione con la minore dist che può raggiungere end
-        if(prevTappa == NULL){
-            percorso = NULL; // se non esiste, non esiste percorso
-        }
-        else{   // se esiste, ripeto ricorsivamente tra prevTappa e end
+        if(prevTappa != NULL)   // se esiste, ripeto ricorsivamente tra prevTappa e end
             percorso = PercorsoForward(start, prevTappa);
-        }
     }
     if(percorso != NULL)
         InsertTail(percorso, end);
@@ -123,8 +173,9 @@ List* PianificaPercorso(Tree* Strada, int start, int end){
     if(start < end){
         percorso = PercorsoForward(startNode, endNode);
     }
-    else{
-        percorso = PercorsoBackward(Strada, startNode, endNode);
+    else{ // start > end
+        //PrintTreeInOrder(Strada->Root);
+        percorso = PercorsoBackward(startNode, endNode);
     }
 
     bool isCorrect = CheckPercorso(percorso);

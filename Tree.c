@@ -133,7 +133,6 @@ void RightRotate(Tree* T, Node* x){
     x->p = y;
 }
 
-
 void TreeInsertFixUp(Tree* T, Node* z);
 void TreeInsert(Tree* T, Node* z){
     Node* y = NULL;
@@ -296,3 +295,9 @@ void TreeInsertFixUp(Tree* T, Node* z){
     }
 }
 
+void PrintTreeInOrder(Node* root){
+    if(root == NULL) return;
+    PrintTreeInOrder(root->left);
+    fprintf(stderr, "%d_%d\n", root->dist, root->max_car);
+    PrintTreeInOrder(root->right);
+}
