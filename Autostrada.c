@@ -91,19 +91,52 @@ List* PercorsoNaiveBackward(Stazione start, Stazione end){
 
     return percorso;
 }
+bool IsBetterBackward(List* a, List* b){
+    if(a->length != b->length) return a->length < b->length;
+    ListNode *x, *y;
+    x = a->TAIL;
+    y = b->TAIL;
+    while(x->s->dist == y->s->dist && x != NULL && y != NULL){
+        x = x->prev;
+        y = y->prev;
+    }
+    // here x != y, meaning x.dist != y.dist
+    return x->s->dist < y->s->dist; // if true, a is better than b
+}
 List* PercorsoMinDistBackward(Stazione start, Stazione end, int length){
     List* percorso = NULL;
-    if(length == 1 && start == end){  
+    List* tempPercorso = NULL;
+
+    if(CanReach(start, end)){  // here length == 2 should be true
         percorso = MakeEmptyList();
         InsertHead(percorso, end);
+        InsertHead(percorso, start);
     }
-    else if(length > 1){ 
-        Stazione x = start;
-        do{
+    else if(length > 2){ 
+        Stazione x = TreePredecessor(start);
+        while(CanReach(start, x)){ // CanReach(start, end) is false, so x will never reach end 
             x = TreePredecessor(x);
-            if(CanReach(start, x))
-                percorso = PercorsoMinDistBackward(x, end, length-1);
-        }while(x != end && CanReach(start, x));
+        }
+        x = TreeSuccessor(x); // x is set to furthest station (lowest dist) that can be reached from start    
+        while(x != start && (length <= 6 || percorso == NULL)){  // dubious length <= 6
+            //if(length >= 13) fprintf(stderr, "Start: %d  -  x: %d - len: %d  -  end: %d\n", start->dist, x->dist, length, end->dist);
+            tempPercorso = PercorsoMinDistBackward(x, end, length-1);
+
+            if(tempPercorso != NULL){
+                if(percorso == NULL){
+                    percorso = tempPercorso;
+                    //break;
+                }
+                else if(IsBetterBackward(tempPercorso, percorso)){
+                    ClearMemoryList(percorso);
+                    percorso = tempPercorso;
+                    fprintf(stderr, " Foundcha!\n");
+                }
+                else ClearMemoryList(tempPercorso);
+            }
+
+            x = TreeSuccessor(x);
+        }
         if(percorso != NULL)
             InsertHead(percorso, start);
     }
@@ -116,12 +149,29 @@ List* PercorsoBackward(Stazione start, Stazione end){
     if(percorso == NULL) return NULL;
     //else, esiste almeno un percorso
     int minLength = percorso->length;
-    ClearMemoryList(percorso);
-    percorso = NULL;
-
-    percorso = AI_PercorsoMinDistBackward(start, end, minLength);
-
-    fprintf(stderr, "Using NAIVE PercorsoBackward!\n");
+    ClearMemoryList(percorso);                                           
+    percorso = NULL;                                                     // ORG
+    percorso = PercorsoMinDistBackward(start, end, minLength);            // ORG
+                                                       
+    /*
+    percorso = MakeEmptyList();  
+    List* tempPercorso = NULL;
+    Stazione x = TreeSuccessor(end);
+    while (CanReach(x, end) && x != start)
+    {
+        tempPercorso = PercorsoNaiveBackward(start, x);
+        InsertTail(tempPercorso, end);
+        Append(tempPercorso, percorso);
+        if(tempPercorso->length == minLength){
+            InsertHead(percorso, end);
+            end = x;
+            //break;
+        }
+        ClearMemoryList(tempPercorso);
+        x = TreeSuccessor(x);
+    }
+    // */
+    fprintf(stderr, "Using PercorsoBackward!\n");
     return percorso;
 }
 
@@ -176,10 +226,19 @@ List* PianificaPercorso(Tree* Strada, int start, int end){
     else{ // start > end
         //PrintTreeInOrder(Strada->Root);
         percorso = PercorsoBackward(startNode, endNode);
+        /*
+        if(percorso != NULL){
+            List* naive = PercorsoNaiveBackward(startNode, endNode);
+            fprintf(stderr, "Percorso >>> Naive? %d\n", IsBetterBackward(percorso, naive));
+            fprintf(stderr, "Naive   : "); PrintErrorList(naive);
+            fprintf(stderr, "Percorso: "); PrintErrorList(percorso);
+            ClearMemoryList(naive);
+        }
+        */
     }
 
     bool isCorrect = CheckPercorso(percorso);
-    if(!isCorrect) printf("Percorso trovato, ma non attuabile! ");
+    if(!isCorrect) fprintf(stderr, "Percorso trovato, ma non attuabile! ");
 
     return percorso;
 }

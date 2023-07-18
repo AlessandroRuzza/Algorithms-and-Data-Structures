@@ -39,6 +39,15 @@ void PrintList(List* list){
     }
     printf("\n");
 }
+void PrintErrorList(List* list){
+    ListNode* x = list->HEAD;
+    while(x != NULL){
+        fprintf(stderr, "%d", x->s->dist);
+        x = x->next;
+        if(x != NULL) fprintf(stderr, " ");
+    }
+    fprintf(stderr, "\n");
+}
 void ClearMemoryList(List* list){
     ListNode* x = list->HEAD;
     ListNode* y;
@@ -51,6 +60,7 @@ void ClearMemoryList(List* list){
 }
 
 void Append(List* to, List* from){
+    if(from->HEAD == NULL) return; //inutile fare append di lista vuota
     to->TAIL->next = from->HEAD;
     to->TAIL = from->TAIL;
     to->length += from->length;
