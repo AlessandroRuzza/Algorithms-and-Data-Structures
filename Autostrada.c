@@ -119,13 +119,13 @@ List* PercorsoMinDistBackward(Stazione start, Stazione end, int length){
         }
         x = TreeSuccessor(x); // x is set to furthest station (lowest dist) that can be reached from start    
         while(x != start && (length <= 6 || percorso == NULL)){  // dubious length <= 6
-            //if(length >= 13) fprintf(stderr, "Start: %d  -  x: %d - len: %d  -  end: %d\n", start->dist, x->dist, length, end->dist);
+            //if(length >= 18) fprintf(stderr, "Start: %d  -  x: %d - len: %d  -  end: %d\n", start->dist, x->dist, length, end->dist);
             tempPercorso = PercorsoMinDistBackward(x, end, length-1);
 
             if(tempPercorso != NULL){
                 if(percorso == NULL){
                     percorso = tempPercorso;
-                    //break;
+                    break;
                 }
                 else if(IsBetterBackward(tempPercorso, percorso)){
                     ClearMemoryList(percorso);
@@ -149,11 +149,11 @@ List* PercorsoBackward(Stazione start, Stazione end){
     if(percorso == NULL) return NULL;
     //else, esiste almeno un percorso
     int minLength = percorso->length;
-    ClearMemoryList(percorso);                                           
-    percorso = NULL;                                                     // ORG
+    //ClearMemoryList(percorso);                                           
+    //percorso = NULL;                                                     // ORG
     percorso = PercorsoMinDistBackward(start, end, minLength);            // ORG
                                                        
-    /*
+    /*  Method 2 (not working)
     percorso = MakeEmptyList();  
     List* tempPercorso = NULL;
     Stazione x = TreeSuccessor(end);
@@ -171,7 +171,38 @@ List* PercorsoBackward(Stazione start, Stazione end){
         x = TreeSuccessor(x);
     }
     // */
-    fprintf(stderr, "Using PercorsoBackward!\n");
+    
+    ///* Method 3
+    //  Partendo dal terzultimo, controllo se c'è una staz con >dist t.c. 
+    //  abbia una auto che permette di ridurre la dist del prossima tappa
+    //  se c'è, sostituisco quella e la prossima tappa con le stazioni trovate
+
+    if(percorso->length >= 4){ // se c'è solo una tappa intermedia (len==3) è inutile
+        ListNode* xNode = percorso->TAIL->prev->prev; // x è terzultima tappa
+        while (xNode != percorso->HEAD){
+            ListNode* xPrevNode = xNode->prev;
+            ListNode* yNode = xNode->next;
+            Stazione x = TreeSuccessor(xNode->s);
+            Stazione y = yNode->s;
+            Stazione xPrev = xPrevNode->s;
+
+            while (x != xPrev){
+                y = TreePredecessor(yNode->s); // y.dist decreases 
+                while(CanReach(x, y) && y != yNode->next->s){ // y.dist < yNode.s.dist , ferma se raggiunge la tappa ancora dopo
+                    if(CanReach(y, yNode->next->s)){ // allora y è valida per essere sostituita
+                        yNode->s = y;
+                        xNode->s = x;
+                    }
+                    y = TreePredecessor(y);
+                }
+                if(xNode->s == x) break; // ferma al primo miglioramento di questo nodo
+                x = TreeSuccessor(x); // x.dist increases
+            }
+            xNode = xNode->prev;
+        }
+    }
+    //*/
+    //fprintf(stderr, "Using PercorsoBackward!\n");
     return percorso;
 }
 
@@ -226,7 +257,7 @@ List* PianificaPercorso(Tree* Strada, int start, int end){
     else{ // start > end
         //PrintTreeInOrder(Strada->Root);
         percorso = PercorsoBackward(startNode, endNode);
-        /*
+        /* Print percorso - compare
         if(percorso != NULL){
             List* naive = PercorsoNaiveBackward(startNode, endNode);
             fprintf(stderr, "Percorso >>> Naive? %d\n", IsBetterBackward(percorso, naive));

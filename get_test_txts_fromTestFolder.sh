@@ -7,4 +7,4 @@ else
     read input
 fi
 cp ./Test/open_$input.txt .
-cp ./Test/open_$input.output.txt .
+# cp ./Test/open_$input.output.txt .
