@@ -19,4 +19,5 @@ fi
 if [ $checkDiff = "y" ]
 then 
     diff ./output_$input.txt ./Test/open_$input.output.txt > open_$input.diff.txt 
+    rm ./output_$input.txt
 fi

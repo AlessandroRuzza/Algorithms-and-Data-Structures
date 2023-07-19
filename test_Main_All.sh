@@ -1,15 +1,11 @@
 #! /usr/bin/sh
 
+
+checkDiff="y"
+
 if [ $# -ge 1 ]
 then
-    checkDiff=$1
-else
-    echo "Check for diff? (y/n): "
-    read checkDiff
-fi
-if [ $# -ge 2 ]
-then
-    input=$2
+    input=$1
 else
     echo "Start from: "
     read input
@@ -18,9 +14,9 @@ else
         input=1
     fi
 fi
-if [ $# -ge 3 ]
+if [ $# -ge 2 ]
 then
-    endAt=$3
+    endAt=$2
 else
     echo "End at: "
     read endAt

@@ -148,61 +148,44 @@ List* PercorsoBackward(Stazione start, Stazione end){
     List* percorso = PercorsoNaiveBackward(start, end);
     if(percorso == NULL) return NULL;
     //else, esiste almeno un percorso
-    int minLength = percorso->length;
-    //ClearMemoryList(percorso);                                           
-    //percorso = NULL;                                                     // ORG
-    percorso = PercorsoMinDistBackward(start, end, minLength);            // ORG
-                                                       
-    /*  Method 2 (not working)
-    percorso = MakeEmptyList();  
-    List* tempPercorso = NULL;
-    Stazione x = TreeSuccessor(end);
-    while (CanReach(x, end) && x != start)
-    {
-        tempPercorso = PercorsoNaiveBackward(start, x);
-        InsertTail(tempPercorso, end);
-        Append(tempPercorso, percorso);
-        if(tempPercorso->length == minLength){
-            InsertHead(percorso, end);
-            end = x;
-            //break;
-        }
-        ClearMemoryList(tempPercorso);
-        x = TreeSuccessor(x);
-    }
-    // */
-    
-    ///* Method 3
-    //  Partendo dal terzultimo, controllo se c'è una staz con >dist t.c. 
-    //  abbia una auto che permette di ridurre la dist del prossima tappa
-    //  se c'è, sostituisco quella e la prossima tappa con le stazioni trovate
-
+      
     if(percorso->length >= 4){ // se c'è solo una tappa intermedia (len==3) è inutile
-        ListNode* xNode = percorso->TAIL->prev->prev; // x è terzultima tappa
-        while (xNode != percorso->HEAD){
-            ListNode* xPrevNode = xNode->prev;
-            ListNode* yNode = xNode->next;
-            Stazione x = TreeSuccessor(xNode->s);
-            Stazione y = yNode->s;
-            Stazione xPrev = xPrevNode->s;
+        for(int i=0; i <= percorso->length; i++){
+            ListNode* xNode = percorso->TAIL->prev->prev; // x è terzultima tappa
+            while (xNode != percorso->HEAD){
+                ListNode* yNode = xNode->next;
+                Stazione x = TreeSuccessor(yNode->s);
+                Stazione y = yNode->s;
+                Stazione xPrev = xNode->prev->s;
+                Stazione yNext = yNode->next->s;
 
-            while (x != xPrev){
-                y = TreePredecessor(yNode->s); // y.dist decreases 
-                while(CanReach(x, y) && y != yNode->next->s){ // y.dist < yNode.s.dist , ferma se raggiunge la tappa ancora dopo
-                    if(CanReach(y, yNode->next->s)){ // allora y è valida per essere sostituita
-                        yNode->s = y;
-                        xNode->s = x;
+                while (x != xPrev){
+                    y = yNode->s; 
+                    while(CanReach(x, y) && y != yNext){ // y.dist < yNode.s.dist, ferma se raggiunge la tappa ancora dopo
+                        if(CanReach(xPrev, x) && CanReach(y, yNext)){ // allora y è valida per essere sostituita
+                            yNode->s = y;
+                            xNode->s = x;
+                        }
+                        y = TreePredecessor(y);
                     }
-                    y = TreePredecessor(y);
+                    x = TreeSuccessor(x); // x.dist increases
                 }
-                if(xNode->s == x) break; // ferma al primo miglioramento di questo nodo
-                x = TreeSuccessor(x); // x.dist increases
+                xNode = xNode->prev;
             }
-            xNode = xNode->prev;
+        }
+
+        // fix problema della seconda tappa (non best dist)
+        ListNode* xNode = percorso->HEAD->next;
+        Stazione xPrev = percorso->HEAD->s;
+        Stazione x = TreePredecessor(xNode->s);
+        Stazione xNext = xNode->next->s;
+        while(x != xNext){
+            if(CanReach(xPrev, x) && CanReach(x, xNext)){
+                xNode->s = x;
+            }
+            x = TreePredecessor(x);
         }
     }
-    //*/
-    //fprintf(stderr, "Using PercorsoBackward!\n");
     return percorso;
 }
 
@@ -255,17 +238,7 @@ List* PianificaPercorso(Tree* Strada, int start, int end){
         percorso = PercorsoForward(startNode, endNode);
     }
     else{ // start > end
-        //PrintTreeInOrder(Strada->Root);
         percorso = PercorsoBackward(startNode, endNode);
-        /* Print percorso - compare
-        if(percorso != NULL){
-            List* naive = PercorsoNaiveBackward(startNode, endNode);
-            fprintf(stderr, "Percorso >>> Naive? %d\n", IsBetterBackward(percorso, naive));
-            fprintf(stderr, "Naive   : "); PrintErrorList(naive);
-            fprintf(stderr, "Percorso: "); PrintErrorList(percorso);
-            ClearMemoryList(naive);
-        }
-        */
     }
 
     bool isCorrect = CheckPercorso(percorso);
