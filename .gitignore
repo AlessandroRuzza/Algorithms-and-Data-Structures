@@ -7,3 +7,4 @@ main
 *.ini
 out_gdb*
 outgdb*
+__Ruzza*

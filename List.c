@@ -1,7 +1,8 @@
-#ifndef RED
-    #include "Tree.c"
+#ifndef RELEASE
+    #ifndef RED
+        #include "Tree.c"
+    #endif
 #endif
-
 typedef struct DoubleLinkedListNode{
     Node *s;
     struct DoubleLinkedListNode* next;

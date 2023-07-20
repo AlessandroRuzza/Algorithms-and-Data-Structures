@@ -1,4 +1,8 @@
 #! /usr/bin/sh
+rm -r Main_TestResult
+mkdir Main_TestResult
+checkDiff="y"
+
 if [ $# -ge 1 ]
 then
     input=$1
@@ -21,14 +25,10 @@ else
         endAt=99
     fi
 fi
-input=1
-echo "Printing diffs from 1 to 99"
+
 while [ $input -le $endAt ]
 do
-    echo $input
-    cat ./Main_TestResult/open_$input.diff.txt
+    echo "Testing #: $input" 
+    ./main < Gen_Test/open_$input.txt > ./Gen_Test_TestResult/open_$input.output.txt
     input=$(( $input + 1 ))
 done
-input="extra_gen"
-echo $input
-cat ./Main_TestResult/open_$input.diff.txt

@@ -1,4 +1,6 @@
-#include "Autostrada.c"
+#ifndef RELEASE
+    #include "Autostrada.c"
+#endif
 
 #define AGG_STAZIONE 0
 #define DEM_STAZIONE 1
@@ -8,16 +10,18 @@
 #define BREAK 5
 #define END 6
 
-Car CarCheck4689(Tree* Strada){
-    Stazione staz = TreeSearch(Strada->Root, 4689);
-    Car car = TreeSearch(staz->carTree.Root, 2170);
+Car CarCheck(Tree* Strada, int s, int c){
+    Stazione staz = TreeSearch(Strada->Root, s);
+    Car car = TreeSearch(staz->carTree.Root, c);
     return car;
 }
 void BreakPoint(Tree* Strada){
     char comment[200];
-    scanf("%s", comment);
+    int dump;
+    dump=scanf("%s", comment);
     fprintf(stderr, "%s\n", comment);
-    //CarCheck4689(Strada);
+    dump=dump;
+    //CarCheck(Strada, 4689, 2110);
 }
 
 int IdentifyCommand(char command[25]){
@@ -34,48 +38,48 @@ int IdentifyCommand(char command[25]){
 void ParseInput(Tree* Strada){
     char command[25] = {0};
     int commandID = -1;
-    int param1, param2;
-    bool result;
+    int param1, param2, dump=0;
+    bool result; 
+    List* percorso;
 
-    scanf("%s", command);
+    dump=scanf("%s", command);
     commandID = IdentifyCommand(command);
 
     switch(commandID){
         case AGG_STAZIONE: 
-            scanf("%d", &param1);
-            scanf("%d", &param2);
+            dump=scanf("%d", &param1);
+            dump=scanf("%d", &param2);
             result = AggiungiStazione(Strada, param1, param2);
             if(result) printf("aggiunta\n");
             else printf("non aggiunta\n");
             break;
         
         case DEM_STAZIONE:
-            scanf("%d", &param1);
+            dump=scanf("%d", &param1);
             result = DemolisciStazione(Strada, param1);
             if(result) printf("demolita\n");
             else printf("non demolita\n");
             break;
 
         case AGG_AUTO:
-            scanf("%d", &param1);
-            scanf("%d", &param2);
+            dump=scanf("%d", &param1);
+            dump=scanf("%d", &param2);
             result = AggiungiAuto(Strada, param1, param2);
             if(result) printf("aggiunta\n");
             else printf("non aggiunta\n");
             break;
 
         case ROTTAMA_AUTO:
-            scanf("%d", &param1);
-            scanf("%d", &param2);
+            dump=scanf("%d", &param1);
+            dump=scanf("%d", &param2);
             result = RottamaAuto(Strada, param1, param2);
             if(result) printf("rottamata\n");
             else printf("non rottamata\n");
             break;
 
         case PIANIFICA_PERCORSO:
-            List* percorso;
-            scanf("%d", &param1);
-            scanf("%d", &param2);
+            dump=scanf("%d", &param1);
+            dump=scanf("%d", &param2);
             percorso = PianificaPercorso(Strada, param1, param2);
             if(percorso == NULL) printf("nessun percorso\n");
             else{ PrintList(percorso); ClearMemoryList(percorso); }
@@ -89,15 +93,14 @@ void ParseInput(Tree* Strada){
 
         default: fprintf(stderr, "Comando non identificato!\n");
     }
+    dump=dump;
 }
 
 int main(int argc, char const *argv[])
 {
     Tree* Strada = (Tree*)malloc(sizeof(Tree));
     Strada->Root = NULL;
-    //int i=1;
     while(!feof(stdin)){
-        //fprintf(stderr, "LINE %d \n", i++);
         ParseInput(Strada);
     }
 

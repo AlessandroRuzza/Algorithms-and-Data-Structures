@@ -1,28 +1,30 @@
-#include "Tree.c"
-#include "List.c"
+#ifndef RELEASE
+    #include "Tree.c"
+    #include "List.c"
+#endif
 
 typedef Node* Stazione;
 typedef Node* Car;
 
 bool AggiungiStazione(Tree* Strada, int dist, int numAuto){
-    int autonomia=0;
+    int autonomia=0, dump=0;
     if(TreeSearch(Strada->Root, dist) != NULL){
         for(int i=0; i<numAuto; i++){
-            scanf("%d", &autonomia);
+            dump=scanf("%d", &autonomia);
         }
         return false;
     }
     Stazione nuovaStazione = MakeNode(dist);
     for(int i=0; i<numAuto; i++){
-        scanf("%d", &autonomia);
+        dump=scanf("%d", &autonomia);
         Car car = MakeCarNode(autonomia);
-        //printf("%d %d\n", i, autonomia);
         TreeInsert(&nuovaStazione->carTree, car);
     }
     if(numAuto > 0)
         nuovaStazione->max_car = TreeMax(nuovaStazione->carTree.Root)->dist;
     
     TreeInsert(Strada, nuovaStazione);
+    dump=dump;
     return true;
 }
 
@@ -58,6 +60,11 @@ bool RottamaAuto(Tree* Strada, int dist, int autonomia){
         return false;
     
     TreeDelete(&stazione->carTree, car);
+    if(stazione->carTree.Root == NULL)
+        stazione->max_car = -1;
+    else if(autonomia >= stazione->max_car){
+        stazione->max_car = TreeMax(stazione->carTree.Root)->dist;
+    }
     return true;
 }
 
@@ -100,48 +107,8 @@ bool IsBetterBackward(List* a, List* b){
         x = x->prev;
         y = y->prev;
     }
-    // here x != y, meaning x.dist != y.dist
-    return x->s->dist < y->s->dist; // if true, a is better than b
-}
-List* PercorsoMinDistBackward(Stazione start, Stazione end, int length){
-    List* percorso = NULL;
-    List* tempPercorso = NULL;
-
-    if(CanReach(start, end)){  // here length == 2 should be true
-        percorso = MakeEmptyList();
-        InsertHead(percorso, end);
-        InsertHead(percorso, start);
-    }
-    else if(length > 2){ 
-        Stazione x = TreePredecessor(start);
-        while(CanReach(start, x)){ // CanReach(start, end) is false, so x will never reach end 
-            x = TreePredecessor(x);
-        }
-        x = TreeSuccessor(x); // x is set to furthest station (lowest dist) that can be reached from start    
-        while(x != start && (length <= 6 || percorso == NULL)){  // dubious length <= 6
-            //if(length >= 18) fprintf(stderr, "Start: %d  -  x: %d - len: %d  -  end: %d\n", start->dist, x->dist, length, end->dist);
-            tempPercorso = PercorsoMinDistBackward(x, end, length-1);
-
-            if(tempPercorso != NULL){
-                if(percorso == NULL){
-                    percorso = tempPercorso;
-                    break;
-                }
-                else if(IsBetterBackward(tempPercorso, percorso)){
-                    ClearMemoryList(percorso);
-                    percorso = tempPercorso;
-                    fprintf(stderr, " Foundcha!\n");
-                }
-                else ClearMemoryList(tempPercorso);
-            }
-
-            x = TreeSuccessor(x);
-        }
-        if(percorso != NULL)
-            InsertHead(percorso, start);
-    }
-
-    return percorso;
+    // qui x != y, ovvero x.dist != y.dist
+    return x->s->dist < y->s->dist; // se vero, a è meglio di b
 }
 
 List* PercorsoBackward(Stazione start, Stazione end){
@@ -150,7 +117,7 @@ List* PercorsoBackward(Stazione start, Stazione end){
     //else, esiste almeno un percorso
       
     if(percorso->length >= 4){ // se c'è solo una tappa intermedia (len==3) è inutile
-        for(int i=0; i <= percorso->length; i++){
+        for(int i=0; i <= percorso->length/2; i++){ // dubious length/2
             ListNode* xNode = percorso->TAIL->prev->prev; // x è terzultima tappa
             while (xNode != percorso->HEAD){
                 ListNode* yNode = xNode->next;
@@ -173,8 +140,9 @@ List* PercorsoBackward(Stazione start, Stazione end){
                 xNode = xNode->prev;
             }
         }
-
-        // fix problema della seconda tappa (non best dist)
+    }
+    // fix problema della seconda tappa (non best dist) (utile anche se length == 3)
+    if(percorso->length >= 3){
         ListNode* xNode = percorso->HEAD->next;
         Stazione xPrev = percorso->HEAD->s;
         Stazione x = TreePredecessor(xNode->s);

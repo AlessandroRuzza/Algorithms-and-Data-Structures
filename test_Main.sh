@@ -3,7 +3,7 @@ if [ $# -ge 1 ] && [ $1 -ge 0 ]
 then
     input=$1
 else
-    echo "Number of input test-case: "
+    echo -n "Number of input test-case: "
     read input
 fi
 ./main < Test/open_$input.txt > ./output_$input.txt
@@ -12,7 +12,7 @@ if [ $# -ge 2 ]
 then
     checkDiff=$2
 else
-    echo "Check for diff? (y/n): "
+    echo -n "Check for diff? (y/n): "
     read checkDiff
 fi
 

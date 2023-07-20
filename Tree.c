@@ -14,7 +14,6 @@ struct RB_Node{
     int max_car;
     struct RB_Tree{     
         struct RB_Node* Root;
-        //struct RB_Node NIL;
     } carTree;
 };
 
@@ -49,11 +48,8 @@ void ClearMemoryTree(Node* Root){
     ClearMemoryTree(Root->left);
     ClearMemoryTree(Root->right);
 
-    //printf("\nCleaning node %d ", Root->dist);
     if(Root->max_car != IS_CAR_VALUE) 
         ClearMemoryTree(Root->carTree.Root);
-    //else
-        //printf("(car)");
 
     free(Root);
 }
@@ -174,9 +170,9 @@ void TreeDelete(Tree* T, Node* z){
     if(y != z){
         z->dist = y->dist;
         z->max_car = y->max_car;
-        Tree temp = z->carTree;
+        Node* temp = z->carTree.Root;
         z->carTree = y->carTree;
-        y->carTree = temp;
+        y->carTree.Root = temp;
     }
     if(y->color == BLACK && x != NULL)
         TreeDeleteFixUp(T, x);
@@ -298,6 +294,6 @@ void TreeInsertFixUp(Tree* T, Node* z){
 void PrintTreeInOrder(Node* root){
     if(root == NULL) return;
     PrintTreeInOrder(root->left);
-    fprintf(stderr, "%d_%d\n", root->dist, root->max_car);
+    fprintf(stderr, "%d - %d\n", root->dist, root->max_car);
     PrintTreeInOrder(root->right);
 }

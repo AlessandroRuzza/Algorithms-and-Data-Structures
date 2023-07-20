@@ -1,13 +1,13 @@
 #! /usr/bin/sh
-
-
+rm -r Main_TestResult
+mkdir Main_TestResult
 checkDiff="y"
 
 if [ $# -ge 1 ]
 then
     input=$1
 else
-    echo "Start from: "
+    echo -n "Start from: "
     read input
     if [ $input -le 0 ]
     then 
@@ -18,7 +18,7 @@ if [ $# -ge 2 ]
 then
     endAt=$2
 else
-    echo "End at: "
+    echo -n "End at: "
     read endAt
     if [ $endAt -ge 100 ]
     then 
@@ -36,3 +36,11 @@ do
     fi
     input=$(( $input + 1 ))
 done
+
+input="extra_gen"
+echo "Testing #: $input" 
+./main < Test/open_$input.txt > ./Main_TestResult/open_$input.output.txt
+if [ $checkDiff = "y" ]
+then 
+    diff ./Main_TestResult/open_$input.output.txt ./Test/open_$input.output.txt > ./Main_TestResult/open_$input.diff.txt 
+fi
