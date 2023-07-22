@@ -19,9 +19,12 @@ bool AggiungiStazione(Tree* Strada, int dist, int numAuto){
         dump=scanf("%d", &autonomia);
         Car car = MakeCarNode(autonomia);
         TreeInsert(&nuovaStazione->carTree, car);
+        if(autonomia > nuovaStazione->max_car){
+            nuovaStazione->max_car = autonomia;
+        }
     }
-    if(numAuto > 0)
-        nuovaStazione->max_car = TreeMax(nuovaStazione->carTree.Root)->dist;
+    //if(numAuto > 0)
+        //nuovaStazione->max_car = TreeMax(nuovaStazione->carTree.Root)->dist;
     
     TreeInsert(Strada, nuovaStazione);
     dump=dump;
@@ -44,8 +47,8 @@ bool AggiungiAuto(Tree* Strada, int dist, int autonomia){
 
     Car car = MakeCarNode(autonomia);
     TreeInsert(&stazione->carTree, car);
-    if(car->dist > stazione->max_car) 
-        stazione->max_car = car->dist;
+    if(autonomia > stazione->max_car) 
+        stazione->max_car = autonomia;
 
     return true;
 }
@@ -117,7 +120,7 @@ List* PercorsoBackward(Stazione start, Stazione end){
     //else, esiste almeno un percorso
       
     if(percorso->length >= 4){ // se c'è solo una tappa intermedia (len==3) è inutile
-        for(int i=0; i <= percorso->length/2; i++){ // dubious length/2
+        for(int i=0; i <= percorso->length; i++){ // dubious length/2
             ListNode* xNode = percorso->TAIL->prev->prev; // x è terzultima tappa
             while (xNode != percorso->HEAD){
                 ListNode* yNode = xNode->next;

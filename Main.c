@@ -19,7 +19,7 @@ void BreakPoint(Tree* Strada){
     char comment[200];
     int dump;
     dump=scanf("%s", comment);
-    fprintf(stderr, "%s\n", comment);
+    //fprintf(stderr, "%s\n", comment);
     dump=dump;
     //CarCheck(Strada, 4689, 2110);
 }
@@ -86,12 +86,12 @@ void ParseInput(Tree* Strada){
             break;
 
         case BREAK:
-            BreakPoint(Strada);
+            //BreakPoint(Strada);
             break;
+        default: //fprintf(stderr, "Comando non identificato!\n");
         case END:
             break;
 
-        default: fprintf(stderr, "Comando non identificato!\n");
     }
     dump=dump;
 }
