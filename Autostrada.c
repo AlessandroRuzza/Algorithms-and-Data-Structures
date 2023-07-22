@@ -120,9 +120,11 @@ List* PercorsoBackward(Stazione start, Stazione end){
     //else, esiste almeno un percorso
       
     if(percorso->length >= 4){ // se c'è solo una tappa intermedia (len==3) è inutile
-        for(int i=0; i <= percorso->length; i++){ // dubious length/2
+        ListNode* stopAt = percorso->HEAD; // x è terzultima tappa
+        for(int i=0; i <= percorso->length/2+1; i++){ // dubious length/2
             ListNode* xNode = percorso->TAIL->prev->prev; // x è terzultima tappa
-            while (xNode != percorso->HEAD){
+            //PrintErrorList(percorso);
+            while (xNode != stopAt){
                 ListNode* yNode = xNode->next;
                 Stazione x = TreeSuccessor(yNode->s);
                 Stazione y = yNode->s;
@@ -142,6 +144,10 @@ List* PercorsoBackward(Stazione start, Stazione end){
                 }
                 xNode = xNode->prev;
             }
+            if(stopAt != percorso->TAIL->prev->prev)
+                stopAt = stopAt->next;
+            if(i == percorso->length/2)
+                stopAt = percorso->HEAD;
         }
     }
     // fix problema della seconda tappa (non best dist) (utile anche se length == 3)

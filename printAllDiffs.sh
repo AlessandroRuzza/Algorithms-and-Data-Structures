@@ -21,8 +21,7 @@ else
         endAt=99
     fi
 fi
-input=1
-echo "Printing diffs from 1 to 99"
+echo "Printing diffs from $input to $endAt"
 while [ $input -le $endAt ]
 do
     echo $input
