@@ -23,8 +23,6 @@ bool AggiungiStazione(Tree* Strada, int dist, int numAuto){
             nuovaStazione->max_car = autonomia;
         }
     }
-    //if(numAuto > 0)
-        //nuovaStazione->max_car = TreeMax(nuovaStazione->carTree.Root)->dist;
     
     TreeInsert(Strada, nuovaStazione);
     dump=dump;
@@ -220,8 +218,8 @@ List* PianificaPercorso(Tree* Strada, int start, int end){
         percorso = PercorsoBackward(startNode, endNode);
     }
 
-    bool isCorrect = CheckPercorso(percorso);
-    if(!isCorrect) fprintf(stderr, "Percorso trovato, ma non attuabile! ");
+    //bool isCorrect = CheckPercorso(percorso);
+    //if(!isCorrect) fprintf(stderr, "Percorso trovato, ma non attuabile! ");
 
     return percorso;
 }
