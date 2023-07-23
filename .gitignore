@@ -8,3 +8,4 @@ main
 out_gdb*
 outgdb*
 __Ruzza*
+callgrind*

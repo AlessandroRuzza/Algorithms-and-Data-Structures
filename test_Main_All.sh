@@ -36,11 +36,13 @@ do
     fi
     input=$(( $input + 1 ))
 done
-
-input="extra_gen"
-echo "Testing #: $input" 
-./main < Test/open_$input.txt > ./Main_TestResult/open_$input.output.txt
-if [ $checkDiff = "y" ]
-then 
-    diff ./Main_TestResult/open_$input.output.txt ./Test/open_$input.output.txt > ./Main_TestResult/open_$input.diff.txt 
+if [ $endAt -ge 99 ]
+then
+    input="extra_gen"
+    echo "Testing #: $input" 
+    ./main < Test/open_$input.txt > ./Main_TestResult/open_$input.output.txt
+    if [ $checkDiff = "y" ]
+    then 
+        diff ./Main_TestResult/open_$input.output.txt ./Test/open_$input.output.txt > ./Main_TestResult/open_$input.diff.txt 
+    fi
 fi

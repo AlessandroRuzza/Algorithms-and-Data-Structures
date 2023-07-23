@@ -28,6 +28,10 @@ do
     cat ./Main_TestResult/open_$input.diff.txt
     input=$(( $input + 1 ))
 done
-input="extra_gen"
-echo $input
-cat ./Main_TestResult/open_$input.diff.txt
+
+if [ $endAt -ge 99 ]
+then
+    input="extra_gen"
+    echo $input
+    cat ./Main_TestResult/open_$input.diff.txt
+fi

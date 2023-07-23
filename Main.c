@@ -47,8 +47,7 @@ void ParseInput(Tree* Strada){
 
     switch(commandID){
         case AGG_STAZIONE: 
-            dump=scanf("%d", &param1);
-            dump=scanf("%d", &param2);
+            dump=scanf("%d %d", &param1, &param2);
             result = AggiungiStazione(Strada, param1, param2);
             if(result) printf("aggiunta\n");
             else printf("non aggiunta\n");
@@ -62,24 +61,21 @@ void ParseInput(Tree* Strada){
             break;
 
         case AGG_AUTO:
-            dump=scanf("%d", &param1);
-            dump=scanf("%d", &param2);
+            dump=scanf("%d %d", &param1, &param2);
             result = AggiungiAuto(Strada, param1, param2);
             if(result) printf("aggiunta\n");
             else printf("non aggiunta\n");
             break;
 
         case ROTTAMA_AUTO:
-            dump=scanf("%d", &param1);
-            dump=scanf("%d", &param2);
+            dump=scanf("%d %d", &param1, &param2);
             result = RottamaAuto(Strada, param1, param2);
             if(result) printf("rottamata\n");
             else printf("non rottamata\n");
             break;
 
         case PIANIFICA_PERCORSO:
-            dump=scanf("%d", &param1);
-            dump=scanf("%d", &param2);
+            dump=scanf("%d %d", &param1, &param2);
             percorso = PianificaPercorso(Strada, param1, param2);
             if(percorso == NULL) printf("nessun percorso\n");
             else{ PrintList(percorso); ClearMemoryList(percorso); }
