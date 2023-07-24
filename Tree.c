@@ -19,9 +19,7 @@ struct RB_Node{
 
 typedef struct RB_Node Node;
 typedef struct RB_Tree Tree;
-
-Node* MakeNode(int dist){
-    Node* n = (Node*)malloc(sizeof(Node));
+void InitNode(Node* n, int dist){
     n->dist = dist;
     n->left = NULL;
     n->right = NULL;
@@ -29,17 +27,20 @@ Node* MakeNode(int dist){
     n->color = BLACK;
     n->max_car = -1;
     n->carTree.Root = NULL;
+}
+Node* MakeNode(int dist){
+    Node* n = (Node*)malloc(sizeof(Node));
+    InitNode(n, dist);
     return n;
 }
 #define IS_CAR_VALUE -100
+void InitCar(Node* car, int autonomy){
+    InitNode(car, autonomy);
+    car->max_car = IS_CAR_VALUE; // using this as "flag" to identify Car nodes
+}
 Node* MakeCarNode(int autonomy){
     Node* car = (Node*)malloc(sizeof(Node));
-    car->dist = autonomy;
-    car->left = NULL;
-    car->right = NULL;
-    car->p = NULL;
-    car->color = BLACK;
-    car->max_car = IS_CAR_VALUE; // using this as "flag" to identify Car nodes
+    InitCar(car, autonomy);
     return car;
 }
 void ClearMemoryTree(Node* Root){

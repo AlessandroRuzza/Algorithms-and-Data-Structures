@@ -118,10 +118,9 @@ List* PercorsoBackward(Stazione start, Stazione end){
     //else, esiste almeno un percorso
       
     if(percorso->length >= 4){ // se c'è solo una tappa intermedia (len==3) è inutile
-        ListNode* stopAt = percorso->HEAD; // x è terzultima tappa
-        ListNode* prev2_Tail = percorso->TAIL->prev->prev; // x è terzultima tappa
-        //ListNode* prev3_Tail = percorso->TAIL->prev->prev->prev; // x è terzultima tappa
-        for(int i=0; i <= percorso->length/2+1; i++){ // dubious length/2
+        ListNode* stopAt = percorso->HEAD; 
+        ListNode* prev2_Tail = percorso->TAIL->prev->prev; 
+        for(int i=0; i <= percorso->length/2+1; i++){
             ListNode* xNode = prev2_Tail; // x è terzultima tappa
             //PrintErrorList(percorso);
             while (xNode != stopAt){
